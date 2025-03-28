@@ -7,6 +7,9 @@ import json
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from zoneinfo import ZoneInfo
+
+ITALY_TZ = ZoneInfo("Europe/Rome")
 
 TOKEN = os.getenv("TOKEN")
 GUILD_ID = int(os.getenv("GUILD_ID"))
@@ -48,7 +51,7 @@ async def recordatorio_command(interaction: discord.Interaction, fecha: str, hor
     try:
         dia, mes = map(int, fecha.split("-"))
         hora_partes = list(map(int, hora.split(":")))
-        dt = datetime(hoy.year, mes, dia, hora_partes[0], hora_partes[1])
+        dt = datetime(hoy.year, mes, dia, hora_partes[0], hora_partes[1], tzinfo=ITALY_TZ)
     except:
         await interaction.response.send_message("❌ Fecha u hora con formato incorrecto. Usa DD-MM y HH:MM", ephemeral=True)
         return
@@ -63,7 +66,7 @@ async def recordatorio_command(interaction: discord.Interaction, fecha: str, hor
 
 @tasks.loop(seconds=60)
 async def revisar_recordatorios():
-    ahora = datetime.now()
+    ahora = ahora = datetime.now(ITALY_TZ)
     canal = None
     guild = discord.utils.get(client.guilds, id=GUILD_ID)
     if guild:
