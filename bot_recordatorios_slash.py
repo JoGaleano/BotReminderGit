@@ -72,7 +72,9 @@ async def revisar_recordatorios():
     guild = discord.utils.get(client.guilds, id=GUILD_ID)
     if guild:
         canal = discord.utils.get(guild.text_channels, name="recordatorios")  # cambia el nombre si usas otro canal
-    pendientes = [r for r in recordatorios if datetime.fromisoformat(r["fecha_hora"]) <= ahora]
+    pendientes = [
+    r for r in recordatorios
+    if datetime.fromisoformat(r["fecha_hora"]).astimezone(ZoneInfo("Europe/Rome")) <= ahora]
     for r in pendientes:
         user = await client.fetch_user(r["usuario_id"])
         fecha_dt = datetime.fromisoformat(r["fecha_hora"])
