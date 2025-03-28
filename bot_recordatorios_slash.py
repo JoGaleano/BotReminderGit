@@ -103,7 +103,10 @@ class RecordatorioView(discord.ui.View):
     @discord.ui.button(label="🔁 Posponer 1 hora", style=discord.ButtonStyle.secondary)
     async def posponer(self, interaction: discord.Interaction, button: discord.ui.Button):
         nueva_fecha = datetime.fromisoformat(self.recordatorio["fecha_hora"]) + timedelta(hours=1)
-        self.recordatorio["fecha_hora"] = nueva_fecha.isoformat()
+        for r in recordatorios:
+            if r == self.recordatorio:
+                r["fecha_hora"] = nueva_fecha.isoformat()
+                break
         guardar_recordatorios(recordatorios)
         await interaction.response.send_message(f"🔁 Pospuesto para {nueva_fecha.strftime('%d-%m %H:%M')}", ephemeral=True)
         self.stop()
