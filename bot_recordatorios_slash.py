@@ -40,6 +40,7 @@ recordatorios = cargar_recordatorios()
 async def on_ready():
     print(f"✅ Bot conectado como {client.user}")
     await tree.sync(guild=discord.Object(id=GUILD_ID))
+    revisar_recordatorios.start()
 
 @tree.command(name="recordatorio", description="Agrega un recordatorio 📌", guild=discord.Object(id=GUILD_ID))
 @app_commands.describe(
@@ -85,12 +86,6 @@ async def revisar_recordatorios():
             )
         else:
             await user.send(f"⏰ Recordatorio: {r['mensaje']}\n📅 {fecha_dt.strftime('%d-%m %H:%M')}")
-
-@client.event
-async def on_ready():
-    print(f"✅ Bot conectado como {client.user}")
-    await tree.sync(guild=discord.Object(id=GUILD_ID))
-    revisar_recordatorios.start()
 
 class RecordatorioView(discord.ui.View):
     def __init__(self, recordatorio):
