@@ -61,7 +61,8 @@ async def recordatorio_command(interaction: discord.Interaction, fecha: str, hor
     recordatorios.append({
         "usuario_id": interaction.user.id,
         "mensaje": mensaje,
-        "fecha_hora": dt.isoformat()
+        "fecha_hora": dt.isoformat(),
+        "enviado": False
     })
     guardar_recordatorios(recordatorios)
     await interaction.response.send_message(f"✅ Recordatorio guardado para {dt.strftime('%d-%m %H:%M')}", ephemeral=True)
@@ -74,8 +75,10 @@ async def revisar_recordatorios():
     if guild:
         canal = discord.utils.get(guild.text_channels, name="recordatorios")  # cambia el nombre si usas otro canal
     pendientes = [
-    r for r in recordatorios
-    if datetime.fromisoformat(r["fecha_hora"]).astimezone(ZoneInfo("Europe/Rome")) <= ahora]
+        r for r in recordatorios
+        if not r.get("enviado", False)
+        and datetime.fromisoformat(r["fecha_hora"]).astimezone(ZoneInfo("Europe/Rome")) <= ahora
+    ]
     for r in pendientes:
         user = await client.fetch_user(r["usuario_id"])
         fecha_dt = datetime.fromisoformat(r["fecha_hora"])
@@ -86,7 +89,10 @@ async def revisar_recordatorios():
             )
         else:
             await user.send(f"⏰ Recordatorio: {r['mensaje']}\n📅 {fecha_dt.strftime('%d-%m %H:%M')}")
-
+          # ✅ Marcar como enviado y guardar
+        r["enviado"] = True
+        guardar_recordatorios(recordatorios)
+        
 class RecordatorioView(discord.ui.View):
     def __init__(self, recordatorio):
         super().__init__(timeout=None)
