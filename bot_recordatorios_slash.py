@@ -69,7 +69,7 @@ async def recordatorio_command(interaction: discord.Interaction, fecha: str, hor
 
 @tasks.loop(seconds=60)
 async def revisar_recordatorios():
-    ahora = datetime.now(ZoneInfo("Europe/Rome"))
+    ahora = datetime.now(ZoneInfo("Europe/Rome")).replace(second=0, microsecond=0)
     canal = None
     guild = discord.utils.get(client.guilds, id=GUILD_ID)
     if guild:
@@ -92,7 +92,7 @@ async def revisar_recordatorios():
           # ✅ Marcar como enviado y guardar
         r["enviado"] = True
         guardar_recordatorios(recordatorios)
-        
+
 class RecordatorioView(discord.ui.View):
     def __init__(self, recordatorio):
         super().__init__(timeout=None)
