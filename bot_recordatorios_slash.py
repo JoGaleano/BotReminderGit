@@ -112,6 +112,7 @@ class RecordatorioView(discord.ui.View):
         for r in recordatorios:
             if r == self.recordatorio:
                 r["fecha_hora"] = nueva_fecha.isoformat()
+                r["enviado"] = False
                 break
         guardar_recordatorios(recordatorios)
         await interaction.response.send_message(f"🔁 Pospuesto para {nueva_fecha.strftime('%d-%m %H:%M')}", ephemeral=True)
